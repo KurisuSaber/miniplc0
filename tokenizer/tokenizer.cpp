@@ -86,6 +86,7 @@ namespace miniplc0 {
 						current_state = DFAState::EQUAL_SIGN_STATE;
 						break;
 					case '-':
+						current_state = DFAState::MINUS_SIGN_STATE;
 						// 请填空：切换到减号的状态
 					case '+':
 						// 请填空：切换到加号的状态

@@ -273,10 +273,11 @@ namespace miniplc0 {
 			return std::make_optional<CompilationError>(_current_pos,ErrorCode::ErrInvalidAssignment);
 		// 标识符声明过吗？
 		if(!isDeclared(next.value().GetValueString()))
-			return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrDuplicateDeclaration);
+			return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrInvalidAssignment);
 		// 标识符是常量吗？
 		if(isConstant(next.value().GetValueString()))
 			return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrInvalidIdentifier);
+		auto identifier = next.value();
 		//'='
 		next = nextToken();
 		if(!next.has_value() || next.value().GetType()!=TokenType::EQUAL_SIGN)
@@ -288,11 +289,13 @@ namespace miniplc0 {
 			return err;
 		// ';'
 		next = nextToken();
-		if(!next.has_value() || next.value().GetType() != TokenType::LEFT_BRACKET)
+		if(!next.has_value() || next.value().GetType() != TokenType::SEMICOLON)
 			return std::make_optional<CompilationError>(_current_pos,ErrorCode::ErrNoSemicolon);
-			
+		
+		_uninitialized_vars.erase(identifier.GetValueString());
+		addVariable(identifier);
 		// 需要生成指令吗？
-		_instructions.emplace_back(Operation::STO,0);
+		_instructions.emplace_back(Operation::STO,getIndex(identifier.GetValueString()));
 		return {};
 	}
 
@@ -385,7 +388,9 @@ namespace miniplc0 {
 		case TokenType::IDENTIFIER:{
 			// 标识符声明过吗？
 			if(!isDeclared(next.value().GetValueString()))
-				return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrDuplicateDeclaration);
+				return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNotDeclared);
+			if(isUninitializedVariable(next.value().GetValueString()))
+				return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNotInitialized);
 			_instructions.emplace_back(Operation::LOD,getIndex(next.value().GetValueString()));
 			break;
 		}

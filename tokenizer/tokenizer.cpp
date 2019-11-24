@@ -146,7 +146,7 @@ namespace miniplc0 {
 					try{
 						std::string strTokenNumber;
 						ss >> strTokenNumber;
-						int tokenNumber = stoi(strTokenNumber);
+						int32_t tokenNumber = stoi(strTokenNumber);
 						return std::make_pair(std::make_optional<Token>(TokenType::UNSIGNED_INTEGER, tokenNumber, pos, currentPos()), std::optional<CompilationError>());
 					}catch(std::out_of_range&){
 						//编译错误 无符号整数越界
@@ -171,7 +171,7 @@ namespace miniplc0 {
 					try{
 						std::string strTokenNumber;
 						ss >> strTokenNumber;
-						int tokenNumber = stoi(strTokenNumber);
+						int32_t tokenNumber = stoi(strTokenNumber);
 						return std::make_pair(std::make_optional<Token>(TokenType::UNSIGNED_INTEGER, tokenNumber, pos, currentPos()), std::optional<CompilationError>());
 					}catch(std::out_of_range&){
 						//编译错误 无符号整数越界
